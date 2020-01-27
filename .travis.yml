@@ -96,7 +96,6 @@ jobs:
         - bash bin/install-wp-tests.sh wordpress_test root '' localhost
         - npm run test:php -- --coverage-clover build/logs/clover.xml
         - bash <(curl -s https://codecov.io/bash) -cF php -f build/logs/clover.xml
-        - npm run build
         - npm run test:js -- --ci --cacheDirectory="$HOME/.jest-cache" --collectCoverage
         - bash <(curl -s https://codecov.io/bash) -cF javascript -f build/logs/lcov.info
     - stage: deploy
@@ -104,9 +103,12 @@ jobs:
       name: Deploy Storybook / Playground
       before_deploy:
         - npm run storybook:build
+        # WP-CLI is needed for building the plugin in the deploy step.
+        - curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+        - chmod +x wp-cli.phar
+        - mv wp-cli.phar $HOME/wp
       deploy:
         - provider: pages
-          skip_cleanup: true
           github_token: $GITHUB_TOKEN
           keep_history: true
           local_dir: build/storybook
