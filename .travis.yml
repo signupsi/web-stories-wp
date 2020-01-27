@@ -62,35 +62,41 @@ jobs:
       php: 7.4
       env: WP_VERSION=latest
       script:
+        - bash bin/install-wp-tests.sh wordpress_test root '' localhost
         - npm run test:php
     - name: PHP unit tests (7.3, WordPress latest)
       php: 7.3
       env: WP_VERSION=latest
       script:
+        - bash bin/install-wp-tests.sh wordpress_test root '' localhost
         - npm run test:php
     - name: PHP unit tests (7.0, WordPress latest)
       php: 7.0
       env: WP_VERSION=latest
       script:
+        - bash bin/install-wp-tests.sh wordpress_test root '' localhost
         - npm run test:php
     - name: PHP unit tests (5.6, WordPress latest)
       php: 5.6
       env: WP_VERSION=latest
       script:
+        - bash bin/install-wp-tests.sh wordpress_test root '' localhost
         - npm run test:php
     - name: PHP unit tests (nightly, WordPress trunk)
       php: nightly
       env: WP_VERSION=trunk
       script:
+        - bash bin/install-wp-tests.sh wordpress_test root '' localhost
         - npm run test:php
     - name: PHP and JavaScript unit tests (7.4, WordPress latest, with code coverage)
       if: branch = master AND type = push
       php: 7.4
       env: WP_VERSION=latest
       script:
-        - npm run build
+        - bash bin/install-wp-tests.sh wordpress_test root '' localhost
         - npm run test:php -- --coverage-clover build/logs/clover.xml
         - bash <(curl -s https://codecov.io/bash) -cF php -f build/logs/clover.xml
+        - npm run build
         - npm run test:js -- --ci --cacheDirectory="$HOME/.jest-cache" --collectCoverage
         - bash <(curl -s https://codecov.io/bash) -cF javascript -f build/logs/lcov.info
     - stage: deploy
