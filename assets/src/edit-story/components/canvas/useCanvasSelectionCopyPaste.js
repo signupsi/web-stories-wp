@@ -28,6 +28,8 @@ import { useCallback, renderToString } from '@wordpress/element';
  * Internal dependencies
  */
 import { useStory } from '../../app';
+import { useConfig } from '../../app/config';
+import { useAPI } from '../../app/api';
 import useClipboardHandlers from '../../utils/useClipboardHandlers';
 import { getDefinitionForType } from '../../elements';
 
@@ -41,6 +43,12 @@ function useCanvasSelectionCopyPaste( container ) {
 		state: { currentPage, selectedElements },
 		actions: { appendElementToCurrentPage, deleteSelectedElements },
 	} = useStory();
+
+	const { actions: { uploadMedia } } = useAPI();
+	const { storyId, allowedMimeTypes: { image: allowedImageMimeTypes } } = useConfig();
+
+	const allowedMimeTypes = { ...allowedImageMimeTypes };
+	const allowedMimeTypesArray = Object.values( allowedMimeTypes );
 
 	const copyCutHandler = useCallback(
 		( evt ) => {
@@ -129,11 +137,20 @@ function useCanvasSelectionCopyPaste( container ) {
 						evt.preventDefault();
 					}
 				}
+
+				const { items } = clipboardData;
+				for ( const file of items ) {
+					if ( allowedMimeTypesArray.includes( file.type ) ) {
+						uploadMedia( file.getAsFile(), {
+							post: storyId,
+						} );
+					}
+				}
 			} catch ( e ) {
 				// Ignore.
 			}
 		},
-		[ appendElementToCurrentPage, currentPage ],
+		[ allowedMimeTypesArray, appendElementToCurrentPage, currentPage, storyId, uploadMedia ],
 	);
 
 	useClipboardHandlers( container, copyCutHandler, pasteHandler );
