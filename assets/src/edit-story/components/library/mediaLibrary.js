@@ -20,6 +20,7 @@
 import PropTypes from 'prop-types';
 import styled, { css } from 'styled-components';
 import { rgba } from 'polished';
+import { useDrag } from 'react-dnd';
 
 /**
  * WordPress dependencies
@@ -48,6 +49,7 @@ export const styledTiles = css`
   width: 100%;
   border-radius: 10px;
   margin-bottom: 10px;
+  background: none !important;
 `;
 
 const Image = styled.img`
@@ -220,19 +222,21 @@ function MediaLibrary({ onInsert }) {
   };
 
   /**
-   * Get a formatted element for different media types.
-   *
-   * @param {Object} mediaEl Attachment object
-   * @param {number} width      Width that element is inserted into editor.
-   * @return {null|*}          Element or null if does not map to video/image.
+   * Formatted element for different media types.
    */
-  const getMediaElement = (mediaEl, width) => {
+  const MediaElement = ({ mediaEl, width }) => {
     const { src, oWidth, oHeight, mimeType } = mediaEl;
     const origRatio = oWidth / oHeight;
     const height = width / origRatio;
+
+    const [, drag] = useDrag({
+      item: { id: src, type: 'media' },
+    });
+
     if (allowedImageMimeTypes.includes(mimeType)) {
       return (
         <Image
+          ref={drag}
           key={src}
           src={src}
           width={width}
@@ -244,6 +248,7 @@ function MediaLibrary({ onInsert }) {
     } else if (allowedVideoMimeTypes.includes(mimeType)) {
       return (
         <Video
+          ref={drag}
           key={src}
           width={width}
           height={height}
@@ -299,16 +304,16 @@ function MediaLibrary({ onInsert }) {
         <Container>
           <Column>
             {media.map((mediaEl, index) => {
-              return isEven(index)
-                ? getMediaElement(mediaEl, DEFAULT_WIDTH)
-                : null;
+              return isEven(index) ? (
+                <MediaElement mediaEl={mediaEl} width={DEFAULT_WIDTH} />
+              ) : null;
             })}
           </Column>
           <Column>
             {media.map((mediaEl, index) => {
-              return !isEven(index)
-                ? getMediaElement(mediaEl, DEFAULT_WIDTH)
-                : null;
+              return !isEven(index) ? (
+                <MediaElement mediaEl={mediaEl} width={DEFAULT_WIDTH} />
+              ) : null;
             })}
           </Column>
         </Container>

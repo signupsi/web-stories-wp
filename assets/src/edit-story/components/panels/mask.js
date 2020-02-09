@@ -35,14 +35,14 @@ import getCommonValue from './utils/getCommonValue';
 function MaskPanel({ selectedElements, onSetProperties }) {
   const masks = selectedElements.map(({ mask }) => mask);
   const type = masks.some((mask) => !mask) ? '' : getCommonValue(masks, 'type');
-  const mask = MASKS.find((aMask) => aMask.type === type);
+  const mask = MASKS[type];
 
   const onTypeChanged = (evt) => {
     const newType = evt.target.value;
     if (newType === '') {
       onSetProperties({ mask: null });
     } else {
-      const newMask = MASKS.find((aMask) => aMask.type === newType);
+      const newMask = MASKS[newType];
       onSetProperties({
         mask: {
           type: newType,
@@ -58,9 +58,9 @@ function MaskPanel({ selectedElements, onSetProperties }) {
         <option key={'none'} value={''}>
           {'None'}
         </option>
-        {MASKS.map(({ type: aType, name }) => (
-          <option key={aType} value={aType}>
-            {name}
+        {Object.keys(MASKS).map((maskType) => (
+          <option key={maskType} value={maskType}>
+            {MASKS[maskType].name}
           </option>
         ))}
       </select>

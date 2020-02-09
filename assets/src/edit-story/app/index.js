@@ -28,6 +28,7 @@ import theme, { GlobalStyle } from '../theme';
 import { GlobalStyle as CropMoveableGlobalStyle } from '../components/movable/cropStyle';
 import { GlobalStyle as DefaultMoveableGlobalStyle } from '../components/movable/moveStyle';
 import { GlobalStyle as ModalGlobalStyle } from '../components/modal';
+import { WithDnd } from '../components/dnd';
 import { useHistory, HistoryProvider } from './history';
 import { useAPI, APIProvider } from './api';
 import { useConfig, ConfigProvider } from './config';
@@ -40,21 +41,23 @@ function App({ config }) {
   return (
     <ThemeProvider theme={theme}>
       <ConfigProvider config={config}>
-        <APIProvider>
-          <HistoryProvider size={50}>
-            <StoryProvider storyId={storyId}>
-              <FontProvider>
-                <GlobalStyle />
-                <DefaultMoveableGlobalStyle />
-                <CropMoveableGlobalStyle />
-                <ModalGlobalStyle />
-                <KeyboardOnlyOutlines>
-                  <Layout />
-                </KeyboardOnlyOutlines>
-              </FontProvider>
-            </StoryProvider>
-          </HistoryProvider>
-        </APIProvider>
+        <WithDnd>
+          <APIProvider>
+            <HistoryProvider size={50}>
+              <StoryProvider storyId={storyId}>
+                <FontProvider>
+                  <GlobalStyle />
+                  <DefaultMoveableGlobalStyle />
+                  <CropMoveableGlobalStyle />
+                  <ModalGlobalStyle />
+                  <KeyboardOnlyOutlines>
+                    <Layout />
+                  </KeyboardOnlyOutlines>
+                </FontProvider>
+              </StoryProvider>
+            </HistoryProvider>
+          </APIProvider>
+        </WithDnd>
       </ConfigProvider>
     </ThemeProvider>
   );

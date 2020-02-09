@@ -62,44 +62,27 @@ function MediaLibrary({ onInsert }) {
         onChange={() => {}}
       />
       <Section title={__('Basic shapes', 'web-stories')}>
-        {/** Square shape */}
-        <ShapePreview
-          key={'square'}
-          onClick={() => {
-            onInsert('square', {
-              backgroundColor: '#333',
-              width: 200,
-              height: 200,
-              x: 5,
-              y: 5,
-              rotationAngle: 0,
-            });
-          }}
-          alt={__('Square', 'web-stories')}
-        >
-          <Square />
-        </ShapePreview>
-        {/** Basic masks */}
-        {MASKS.map((mask) => (
+        {/** Basic shapes */}
+        {Object.keys(MASKS).map((maskType) => (
           <ShapePreview
-            key={mask.type}
+            key={maskType}
             onClick={() => {
               onInsert('square', {
-                backgroundColor: '#333',
+                backgroundColor: '#b4b4b4',
                 width: 200,
                 height: 200,
                 x: 5,
                 y: 5,
                 rotationAngle: 0,
                 mask: {
-                  type: mask.type,
+                  type: maskType,
                 },
               });
             }}
-            alt={mask.name}
+            alt={MASKS[maskType].name}
           >
             <svg viewBox={'0 0 1 1'} width={PREVIEW_SIZE} height={PREVIEW_SIZE}>
-              <Path d={mask.path} />
+              <Path d={MASKS[maskType].path} />
             </svg>
           </ShapePreview>
         ))}
